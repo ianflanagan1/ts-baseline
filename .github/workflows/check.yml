@@ -1,0 +1,18 @@
+# Runs the same check as `devbox run check` locally, on every push and pull request.
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+      - run: devbox run setup
+      - run: devbox run check

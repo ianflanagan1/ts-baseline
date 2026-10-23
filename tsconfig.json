@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": ["src", "types", "*.js", "*.ts", ".dependency-cruiser.js"],
+  "exclude": ["src/fixtures"]
+}

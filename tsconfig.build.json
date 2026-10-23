@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rewriteRelativeImportExtensions": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "allowJs": false,
+    "checkJs": false
+  },
+  "include": ["src", "types"],
+  "exclude": ["src/**/*.test.ts", "src/fixtures", "src/testing"]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.18.4/.schema/devbox.schema.json",
+  "packages": ["nodejs@24.21.0", "pnpm@12.9.0"],
+  "shell": {
+    "scripts": {
+      "setup": "pnpm install --frozen-lockfile",
+      "check": "pnpm check",
+      "format": "pnpm format",
+      "lint-file": "pnpm exec prettier --write --ignore-unknown --log-level warn \"$@\" && pnpm exec eslint --fix --max-warnings 0 --no-warn-ignored \"$@\""
+    }
+  }
+}

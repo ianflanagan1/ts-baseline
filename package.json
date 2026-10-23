@@ -1,0 +1,77 @@
+{
+  "name": "@ianflanagan1/ts-baseline",
+  "version": "0.1.0",
+  "description": "Shared TypeScript strictness: an ESLint config with a no-unused-result rule, a tsconfig base, a Prettier config, and a check that a project still follows them",
+  "license": "MIT",
+  "author": "Ian Flanagan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianflanagan1/ts-baseline.git"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "typescript",
+    "tsconfig",
+    "prettier",
+    "static analysis"
+  ],
+  "type": "module",
+  "packageManager": "pnpm@12.9.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    "./eslint": {
+      "types": "./dist/eslint.d.ts",
+      "default": "./dist/eslint.js"
+    },
+    "./tsconfig.json": "./tsconfig.base.json",
+    "./prettier": "./prettier.json"
+  },
+  "bin": {
+    "ts-baseline": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/fixtures",
+    "tsconfig.base.json",
+    "prettier.json"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p .",
+    "lint": "eslint --max-warnings 0 .",
+    "test": "vitest run",
+    "verify": "node src/cli.ts verify",
+    "knip": "knip",
+    "check": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm deps && pnpm knip && pnpm test && pnpm verify && pnpm build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepack": "pnpm build",
+    "deps": "depcruise src --config .dependency-cruiser.js"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0",
+    "prettier": "^3.0.0",
+    "typescript": ">=6.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/utils": "^8.72.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "typescript-eslint": "^8.72.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@typescript-eslint/rule-tester": "^8.72.0",
+    "dependency-cruiser": "^18.7.0",
+    "eslint": "^10.13.0",
+    "knip": "^6.42.1",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2024",
+    "lib": ["es2024"],
+    "module": "nodenext",
+    "types": []
+  },
+  "include": ["file.ts"]
+}

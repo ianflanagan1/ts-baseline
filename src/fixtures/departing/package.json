@@ -1,0 +1,11 @@
+{
+  "name": "departing",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@ianflanagan1/ts-baseline": "^0.1.0",
+    "dependency-cruiser": "^18.7.0",
+    "knip": "^6.42.1",
+    "vitest": "^5.0.5"
+  }
+}

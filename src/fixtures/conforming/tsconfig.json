@@ -1,0 +1,5 @@
+{
+  // Relative rather than by package name, so the fixture runs before the package is installed anywhere.
+  "extends": "../../../tsconfig.base.json",
+  "include": ["src"]
+}
