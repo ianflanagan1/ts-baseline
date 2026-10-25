@@ -59,4 +59,4 @@ devbox run check   # formatting, types, lint, dependency rules, knip, tests, ver
 
 The code follows the baseline it ships: `src/verify/findProblems.ts` decides from plain values, and `src/verify/gatherFacts.ts` reads the project through ESLint's, TypeScript's and Prettier's own config resolution.
 
-Publish with `npm publish --access public`; `prepack` builds `dist/` first.
+Release with `github release . <patch|minor|major>` ([repo-tools](https://github.com/ianflanagan1/repo-tools)): `.github/workflows/publish.yml` publishes the tag's version to npm, with provenance and no token. The first version, and npm's trust in the workflow, come from `npmjs publish .`. `prepack` builds `dist/` before each publish.

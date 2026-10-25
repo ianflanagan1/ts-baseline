@@ -1,0 +1,39 @@
+# Publishes each version tag to npm. npm trusts this workflow (`npmjs publish` set that up),
+# so there's no token; the version comes from the tag, which `github release` pushes.
+name: publish
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+      - run: devbox run setup
+      - run: devbox run check
+      - name: Publish the tag's version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          name=$(devbox run -q -- node -p 'require("./package.json").name')
+          if ! devbox run -q -- npm view "$name" name >/dev/null 2>&1; then
+            echo "::notice::$name isn't on npm yet: run \`npmjs publish\`, which publishes $version and trusts this workflow."
+            exit 0
+          fi
+          if devbox run -q -- npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "::notice::npm already has $name@$version."
+            exit 0
+          fi
+          devbox run -q -- npm version "$version" --no-git-tag-version --allow-same-version
+          devbox run -q -- npm publish --provenance --access public
