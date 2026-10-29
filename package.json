@@ -40,8 +40,8 @@
     "prettier.json"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p .",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json",
+    "typecheck": "tsc --project .",
     "lint": "eslint --max-warnings 0 .",
     "test": "vitest run",
     "verify": "node src/cli.ts verify",

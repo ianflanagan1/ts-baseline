@@ -12,7 +12,7 @@ One place for the static checks every TypeScript project of mine shares, so each
 ## Use
 
 ```sh
-pnpm add -D @ianflanagan1/ts-baseline eslint prettier typescript
+pnpm add --save-dev @ianflanagan1/ts-baseline eslint prettier typescript
 ```
 
 `eslint.config.js`:

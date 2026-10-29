@@ -26,14 +26,14 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           version="${TAG#v}"
-          name=$(devbox run -q -- node -p 'require("./package.json").name')
-          if ! devbox run -q -- npm view "$name" name >/dev/null 2>&1; then
+          name=$(devbox run --quiet -- node --print 'require("./package.json").name')
+          if ! devbox run --quiet -- npm view "$name" name >/dev/null 2>&1; then
             echo "::notice::$name isn't on npm yet: run \`npmjs publish\`, which publishes $version and trusts this workflow."
             exit 0
           fi
-          if devbox run -q -- npm view "$name@$version" version >/dev/null 2>&1; then
+          if devbox run --quiet -- npm view "$name@$version" version >/dev/null 2>&1; then
             echo "::notice::npm already has $name@$version."
             exit 0
           fi
-          devbox run -q -- npm version "$version" --no-git-tag-version --allow-same-version
-          devbox run -q -- npm publish --provenance --access public
+          devbox run --quiet -- npm version "$version" --no-git-tag-version --allow-same-version
+          devbox run --quiet -- npm publish --provenance --access public
