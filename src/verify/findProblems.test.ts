@@ -70,14 +70,86 @@ describe('findProblems', () => {
   });
 
   it('asks for devbox when the project has none', () => {
-    expect(findProblems(aConformingProject().withDevboxScripts(null).build())).toEqual([
-      'No devbox.json: pin Node and the package manager in devbox, with scripts for setup, check, format and lint-file.',
+    expect(findProblems(aConformingProject().withDevbox(null).build())).toEqual([
+      'No devbox.json: pin Node, the package manager and go-task in devbox.',
     ]);
   });
 
-  it('reports a missing devbox script', () => {
-    expect(findProblems(aConformingProject().withDevboxScripts(['setup', 'check', 'format']).build())).toEqual([
-      'devbox.json: add a `lint-file` script.',
+  it('asks for go-task when devbox does not pin it', () => {
+    expect(
+      findProblems(
+        aConformingProject()
+          .withDevbox({ packages: ['nodejs', 'pnpm'], scripts: [] })
+          .build(),
+      ),
+    ).toEqual(['devbox.json: pin go-task, which runs the Taskfile.']);
+  });
+
+  it('asks for each devbox script to move into the Taskfile', () => {
+    const facts = aConformingProject()
+      .withDevbox({ packages: ['nodejs', 'pnpm', 'go-task'], scripts: ['check'] })
+      .build();
+    expect(findProblems(facts)).toEqual(['devbox.json: move the `check` script into a Taskfile task; devbox only pins tools.']);
+  });
+
+  it('asks for a Taskfile when the project has none', () => {
+    expect(findProblems(aConformingProject().withTaskfile(null).build())).toEqual([
+      "No Taskfile.yml: add one with setup, check, format and lint-file tasks, and include the baseline's tasks as `baseline`.",
+    ]);
+  });
+
+  it('reports a missing task', () => {
+    expect(findProblems(aConformingProject().withoutTask('lint-file').build())).toEqual(['Taskfile: add a `lint-file` task.']);
+  });
+
+  it("asks for the baseline's tasks when the Taskfile does not include them", () => {
+    const facts = aConformingProject().withBaselineInclude(null).withTask('check', []).build();
+    expect(findProblems(facts)).toEqual([
+      "Taskfile: include the baseline's tasks: `includes: { baseline: { taskfile: ./node_modules/@ianflanagan1/ts-baseline/Taskfile.baseline.yml, optional: true } }`.",
+      'Taskfile: have `check` run `task: baseline:check`.',
+    ]);
+  });
+
+  it("reports a shared task that no longer runs the baseline's own", () => {
+    const facts = aConformingProject().withTask('check', ['typecheck', 'test']).build();
+    expect(findProblems(facts)).toEqual(['Taskfile: have `check` run `task: baseline:check`.']);
+  });
+
+  it('accepts the baseline included under another namespace', () => {
+    const facts = aConformingProject()
+      .withBaselineInclude({ namespace: 'shared', excludes: [], runsInProjectRoot: true })
+      .withTask('check', ['shared:check'])
+      .withTask('format', ['shared:format'])
+      .withTask('lint-file', ['shared:lint-file'])
+      .build();
+    expect(findProblems(facts)).toEqual([]);
+  });
+
+  it('reports an include that leaves out a shared task', () => {
+    const facts = aConformingProject()
+      .withBaselineInclude({ namespace: 'baseline', excludes: ['check', 'setup'], runsInProjectRoot: true })
+      .build();
+    expect(findProblems(facts)).toEqual(["Taskfile: don't exclude `check` from the baseline's tasks."]);
+  });
+
+  it("reports an include that runs the baseline's tasks outside the project root", () => {
+    const facts = aConformingProject().withBaselineInclude({ namespace: 'baseline', excludes: [], runsInProjectRoot: false }).build();
+    expect(findProblems(facts)).toEqual([
+      "Taskfile: drop `dir` from the baseline's include; its tasks check the directory they run in, which must be the project root.",
+    ]);
+  });
+
+  it('asks for a dependency-cruiser config when there is none', () => {
+    expect(findProblems(aConformingProject().withDependencyCruiserRules(null).build())).toEqual([
+      'No dependency-cruiser config: add a .dependency-cruiser.js that extends @ianflanagan1/ts-baseline/dependency-cruiser.',
+    ]);
+  });
+
+  it('reports a dependency rule that is weakened or dropped', () => {
+    const facts = aConformingProject().withDependencyCruiserRules({ 'no-circular': 'warn' }).build();
+    expect(findProblems(facts)).toEqual([
+      'dependency-cruiser: `core-is-pure` must be an error, as it is in @ianflanagan1/ts-baseline/dependency-cruiser.',
+      'dependency-cruiser: `no-circular` must be an error, as it is in @ianflanagan1/ts-baseline/dependency-cruiser.',
     ]);
   });
 
@@ -99,14 +171,13 @@ describe('findProblems', () => {
   });
 
   it('accepts any one of the files that can satisfy a requirement', () => {
-    const facts = aConformingProject().withRootFiles(['package-lock.json', '.dependency-cruiser.cjs', 'knip.config.ts']).build();
+    const facts = aConformingProject().withRootFiles(['package-lock.json', 'knip.config.ts']).build();
     expect(findProblems(facts)).toEqual([]);
   });
 
   it('reports missing root files', () => {
     expect(findProblems(aConformingProject().withRootFiles(['knip.json']).build())).toEqual([
       'Add a committed lockfile at the project root (pnpm-lock.yaml or package-lock.json).',
-      'Add a dependency-cruiser config at the project root (.dependency-cruiser.js or .dependency-cruiser.cjs or .dependency-cruiser.mjs).',
     ]);
   });
 });

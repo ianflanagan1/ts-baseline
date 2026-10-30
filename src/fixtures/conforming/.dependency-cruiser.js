@@ -1,1 +1,1 @@
-export default { forbidden: [] };
+export default { extends: '../../../dependency-cruiser.js' };

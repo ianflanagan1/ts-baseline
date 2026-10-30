@@ -1,0 +1,51 @@
+version: '3'
+
+# The package uses its own shared tasks, as a project does through node_modules.
+includes:
+  baseline:
+    taskfile: ./Taskfile.baseline.yml
+
+tasks:
+  setup:
+    desc: Install dependencies from the lockfile
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  build:
+    desc: Build dist/
+    cmds:
+      - pnpm build
+
+  check:
+    desc: Build, then the shared check, whose verify runs the built CLI on the package itself
+    cmds:
+      - task: build
+      - task: baseline:check
+
+  format:
+    desc: Format every file
+    cmds:
+      - task: baseline:format
+
+  lint-file:
+    desc: Format, fix and lint the files given after --
+    cmds:
+      - task: baseline:lint-file
+
+  publish:
+    desc: Publish VERSION to npm with provenance, run by .github/workflows/publish.yml
+    requires:
+      vars: [VERSION]
+    cmds:
+      - |
+        name=$(node --print 'require("./package.json").name')
+        if ! npm view "$name" name >/dev/null 2>&1; then
+          echo "::notice::$name isn't on npm yet: run \`npmjs publish\`, which publishes {{.VERSION}} and trusts this workflow."
+          exit 0
+        fi
+        if npm view "$name@{{.VERSION}}" version >/dev/null 2>&1; then
+          echo "::notice::npm already has $name@{{.VERSION}}."
+          exit 0
+        fi
+        npm version "{{.VERSION}}" --no-git-tag-version --allow-same-version
+        npm publish --provenance --access public

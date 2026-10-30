@@ -1,5 +1,4 @@
 {
   // Comments are allowed here, as devbox allows them.
-  "packages": ["nodejs@24.21.0", "pnpm@12.9.0"],
-  "shell": { "scripts": { "setup": "true", "check": "true", "format": "true", "lint-file": "true" } }
+  "packages": ["nodejs@24.21.0", "pnpm@12.9.0", "go-task@3.53.1"]
 }

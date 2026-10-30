@@ -1,0 +1,17 @@
+version: '3'
+
+includes:
+  shared:
+    taskfile: ../../../Taskfile.baseline.yml
+    excludes: [format]
+    dir: ./elsewhere
+
+tasks:
+  setup:
+    cmds: [true]
+  check:
+    cmds:
+      - task: shared:check
+        ignore_error: true
+  lint-file:
+    deps: [shared:lint-file]

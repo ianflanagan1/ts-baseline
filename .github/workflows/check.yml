@@ -1,4 +1,4 @@
-# Runs the same check as `devbox run check` locally, on every push and pull request.
+# Runs the same check as `devbox run -- task check` locally, on every push and pull request.
 name: check
 
 on:
@@ -14,5 +14,5 @@ jobs:
       - uses: jetify-com/devbox-install-action@v0.15.0
         with:
           enable-cache: true
-      - run: devbox run setup
-      - run: devbox run check
+      - run: devbox run -- task setup
+      - run: devbox run -- task check

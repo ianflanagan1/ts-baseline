@@ -1,7 +1,7 @@
 {
   "name": "@ianflanagan1/ts-baseline",
   "version": "0.1.0",
-  "description": "Shared TypeScript strictness: an ESLint config with a no-unused-result rule, a tsconfig base, a Prettier config, and a check that a project still follows them",
+  "description": "Shared TypeScript strictness: an ESLint config with a no-unused-result rule, a tsconfig base, a Prettier config, dependency-cruiser rules, shared Taskfile tasks, and a check that a project still follows them",
   "license": "MIT",
   "author": "Ian Flanagan",
   "repository": {
@@ -27,7 +27,8 @@
       "default": "./dist/eslint.js"
     },
     "./tsconfig.json": "./tsconfig.base.json",
-    "./prettier": "./prettier.json"
+    "./prettier": "./prettier.json",
+    "./dependency-cruiser": "./dependency-cruiser.js"
   },
   "bin": {
     "ts-baseline": "./dist/cli.js"
@@ -37,22 +38,16 @@
     "!dist/**/*.test.*",
     "!dist/fixtures",
     "tsconfig.base.json",
-    "prettier.json"
+    "prettier.json",
+    "dependency-cruiser.js",
+    "Taskfile.baseline.yml"
   ],
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
-    "typecheck": "tsc --project .",
-    "lint": "eslint --max-warnings 0 .",
-    "test": "vitest run",
-    "verify": "node src/cli.ts verify",
-    "knip": "knip",
-    "check": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm deps && pnpm knip && pnpm test && pnpm verify && pnpm build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "prepack": "pnpm build",
-    "deps": "depcruise src --config .dependency-cruiser.js"
+    "prepack": "pnpm build"
   },
   "peerDependencies": {
+    "dependency-cruiser": "^18.0.0",
     "eslint": "^10.0.0",
     "prettier": "^3.0.0",
     "typescript": ">=6.0.0"
@@ -62,7 +57,8 @@
     "@typescript-eslint/utils": "^8.72.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "^8.72.0",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

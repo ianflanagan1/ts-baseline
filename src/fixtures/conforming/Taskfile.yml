@@ -1,0 +1,19 @@
+version: '3'
+
+includes:
+  baseline:
+    taskfile: ../../../Taskfile.baseline.yml
+    optional: true
+
+tasks:
+  setup:
+    cmds: [true]
+  check:
+    cmds:
+      - task: baseline:check
+  format:
+    cmds:
+      - task: baseline:format
+  lint-file:
+    cmds:
+      - task: baseline:lint-file

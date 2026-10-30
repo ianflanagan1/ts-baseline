@@ -19,21 +19,9 @@ jobs:
       - uses: jetify-com/devbox-install-action@v0.15.0
         with:
           enable-cache: true
-      - run: devbox run setup
-      - run: devbox run check
+      - run: devbox run -- task setup
+      - run: devbox run -- task check
       - name: Publish the tag's version
         env:
           TAG: ${{ github.ref_name }}
-        run: |
-          version="${TAG#v}"
-          name=$(devbox run --quiet -- node --print 'require("./package.json").name')
-          if ! devbox run --quiet -- npm view "$name" name >/dev/null 2>&1; then
-            echo "::notice::$name isn't on npm yet: run \`npmjs publish\`, which publishes $version and trusts this workflow."
-            exit 0
-          fi
-          if devbox run --quiet -- npm view "$name@$version" version >/dev/null 2>&1; then
-            echo "::notice::npm already has $name@$version."
-            exit 0
-          fi
-          devbox run --quiet -- npm version "$version" --no-git-tag-version --allow-same-version
-          devbox run --quiet -- npm publish --provenance --access public
+        run: devbox run --quiet -- task publish VERSION="${TAG#v}"

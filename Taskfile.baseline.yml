@@ -1,0 +1,29 @@
+version: '3'
+
+# The tasks every project shares. A project includes this file as `baseline`, with `optional: true` so its own
+# `setup` can install it, and has its own check, format and lint-file run these. They run in the project root.
+
+tasks:
+  check:
+    desc: Formatting, types, lint, dependency rules, knip, ts-baseline verify and tests
+    cmds:
+      - pnpm exec prettier --check .
+      - pnpm exec tsc --project .
+      - pnpm exec eslint --max-warnings 0 .
+      - pnpm exec depcruise src --config
+      - pnpm exec knip
+      - node {{shellQuote .TASKFILE_DIR}}/dist/cli.js verify
+      - pnpm exec vitest run
+
+  format:
+    desc: Format every file
+    cmds:
+      - pnpm exec prettier --write .
+
+  lint-file:
+    desc: Format, fix and lint the files given after --
+    vars:
+      FILES: '{{range .CLI_ARGS_LIST}}{{shellQuote .}} {{end}}'
+    cmds:
+      - pnpm exec prettier --write --ignore-unknown --log-level warn {{.FILES}}
+      - pnpm exec eslint --fix --max-warnings 0 --no-warn-ignored {{.FILES}}

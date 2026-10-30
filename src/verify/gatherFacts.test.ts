@@ -19,7 +19,12 @@ describe('gatherFacts', () => {
       'ESLint: `no-restricted-syntax` no longer bans `:matches(:function, TSDeclareFunction, TSMethodSignature, TSFunctionType, TSEmptyBodyFunctionExpression) > Identifier[optional=true]`; spread `bannedSyntax` into it.',
       'ESLint: `no-restricted-syntax` no longer bans `TSPropertySignature[optional=true]`; spread `bannedSyntax` into it.',
       'Prettier: `printWidth` must be 140, as it is in @ianflanagan1/ts-baseline/prettier.',
-      'No devbox.json: pin Node and the package manager in devbox, with scripts for setup, check, format and lint-file.',
+      'No devbox.json: pin Node, the package manager and go-task in devbox.',
+      'Taskfile: add a `format` task.',
+      "Taskfile: drop `dir` from the baseline's include; its tasks check the directory they run in, which must be the project root.",
+      "Taskfile: don't exclude `format` from the baseline's tasks.",
+      'Taskfile: have `check` run `task: shared:check`.',
+      'dependency-cruiser: `no-circular` must be an error, as it is in @ianflanagan1/ts-baseline/dependency-cruiser.',
       'package.json: pin the package manager with a `packageManager` field.',
     ]);
   });
